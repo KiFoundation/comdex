@@ -1,0 +1,69 @@
+syntax = "proto3";
+package comdex.liquidation.v1beta1;
+
+import "gogoproto/gogo.proto";
+import "google/api/annotations.proto";
+import "cosmos/base/query/v1beta1/pagination.proto";
+import "comdex/liquidation/v1beta1/params.proto";
+import "cosmos/base/v1beta1/coin.proto";
+
+option go_package = "github.com/comdex-official/comdex/x/liquidation/types";
+
+
+message LockedVaultInfo{
+
+  uint64 locked_vault_id = 1;
+  uint64 id = 2;
+  uint64 pair_id = 3 [
+    (gogoproto.customname) = "PairID",
+    (gogoproto.moretags)   = "yaml:\"pair_id\""
+  ];
+  string owner     = 4 [ (gogoproto.moretags) = "yaml:\"owner\"" ];
+
+  cosmos.base.v1beta1.Coin collateral = 5 [
+    (gogoproto.moretags) = "yaml:\"collateral\"",
+    (gogoproto.nullable) = false
+  ];
+
+  cosmos.base.v1beta1.Coin debt = 6 [
+    (gogoproto.moretags) = "yaml:\"debt\"",
+    (gogoproto.nullable) = false
+  ];
+
+  string collateralization_ratio = 7 [
+    (gogoproto.moretags) = "yaml:\"collateralization_ratio\"",
+    (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Dec",
+    (gogoproto.nullable) = false
+  ];
+
+  string new_owner = 8 [ (gogoproto.moretags) = "yaml:\"admin\"" ];
+}
+
+message QueryLockedVaultRequest {
+  uint64 id = 1 [ (gogoproto.moretags) = "yaml:\"id\"" ];
+}
+
+message QueryLockedVaultResponse {
+  LockedVaultInfo LockedVaultInfo = 1[
+    (gogoproto.customname) = "LockedVaultInfo",
+    (gogoproto.moretags)   = "yaml:\"vaultInfo\"",
+    (gogoproto.nullable)   = false
+  ];
+}
+
+
+service Query {
+  rpc Params(QueryParamsRequest) returns (QueryParamsResponse) {
+    option (google.api.http).get = "/comdex/liquidation/v1beta1/params";
+  }
+  rpc QueryLockedVault(QueryLockedVaultRequest) returns (QueryLockedVaultResponse) {
+    option (google.api.http).get = "/comdex/liquidation/v1beta1/locked_vaults/{id}";
+  };
+}
+
+message QueryParamsRequest {}
+
+message QueryParamsResponse {
+  Params params = 1 [(gogoproto.nullable) = false];
+}
+
