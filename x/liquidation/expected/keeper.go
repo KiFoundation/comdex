@@ -26,4 +26,7 @@ type OracleKeeper interface {
 type VaultKeeper interface {
 	CalculateCollaterlizationRatio(ctx sdk.Context, amountIn sdk.Int, assetIn assettypes.Asset, amountOut sdk.Int, assetOut assettypes.Asset) (sdk.Dec, error)
 	GetVault(ctx sdk.Context, id uint64) (vault types.Vault, found bool)
+	GetVaults(ctx sdk.Context) (vaults []types.Vault)
+	DeleteVault(ctx sdk.Context, id uint64)
+	DeleteVaultForAddressByPair(ctx sdk.Context, address sdk.AccAddress, pairID uint64)
 }
