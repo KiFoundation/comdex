@@ -46,6 +46,8 @@ func BeginBlocker(ctx sdk.Context, req abci.RequestBeginBlock, k keeper.Keeper) 
 			)
 			k.SetLockedVaultID(ctx, id+1)
 			k.SetVault(ctx, vault)
+			k.DeleteVault(ctx, vault.ID)
+
 		}
 	}
 }

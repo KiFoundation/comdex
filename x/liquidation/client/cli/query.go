@@ -3,8 +3,6 @@ package cli
 import (
 	"fmt"
 	"github.com/cosmos/cosmos-sdk/client/flags"
-	"strconv"
-
 	// "strings"
 
 	"github.com/spf13/cobra"
@@ -27,33 +25,32 @@ func GetQueryCmd(queryRoute string) *cobra.Command {
 
 	cmd.AddCommand(
 		CmdQueryParams(),
-		QueryLockedVault(),
+		QueryAllVaults(),
 		)
 
 	return cmd
 }
 
-func QueryLockedVault() *cobra.Command {
+func QueryAllVaults() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "lockedvault [id]",
-		Short: "Locked vault's information",
-		Args:  cobra.ExactArgs(1),
+		Use:   "lockedvaults",
+		Short: "list of all vaults available",
 		RunE: func(cmd *cobra.Command, args []string) error {
+
+			pagination, err := client.ReadPageRequest(cmd.Flags())
+			if err != nil {
+				return err
+			}
 
 			ctx, err := client.GetClientQueryContext(cmd)
 			if err != nil {
 				return err
 			}
 
-			id, err := strconv.ParseUint(args[0], 10, 64)
-			if err != nil {
-				return err
-			}
-
 			queryClient := types.NewQueryClient(ctx)
 
-			res, err := queryClient.QueryLockedVault(cmd.Context(), &types.QueryLockedVaultRequest{
-				Id: id,
+			res, err := queryClient.QueryAllVaults(cmd.Context(), &types.QueryAllVaultsRequest{
+				Pagination: pagination,
 			})
 
 			if err != nil {

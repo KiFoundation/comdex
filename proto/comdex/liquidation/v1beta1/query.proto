@@ -51,6 +51,22 @@ message QueryLockedVaultResponse {
   ];
 }
 
+message QueryAllVaultsRequest {
+  cosmos.base.query.v1beta1.PageRequest pagination = 1
+  [ (gogoproto.moretags) = "yaml:\"pagination\"" ];
+}
+
+message QueryAllVaultsResponse {
+  repeated LockedVaultInfo LockedVaultInfo = 1 [
+    (gogoproto.customname) = "VaultsInfo",
+    (gogoproto.moretags)   = "yaml:\"vaultsInfo\"",
+    (gogoproto.nullable)   = false
+  ];
+  cosmos.base.query.v1beta1.PageResponse pagination = 2
+  [ (gogoproto.moretags) = "yaml:\"pagination\"" ];
+}
+
+
 
 service Query {
   rpc Params(QueryParamsRequest) returns (QueryParamsResponse) {
@@ -58,6 +74,9 @@ service Query {
   }
   rpc QueryLockedVault(QueryLockedVaultRequest) returns (QueryLockedVaultResponse) {
     option (google.api.http).get = "/comdex/liquidation/v1beta1/locked_vaults/{id}";
+  };
+  rpc QueryAllVaults(QueryAllVaultsRequest) returns (QueryAllVaultsResponse) {
+    option (google.api.http).get = "/comdex/liquidation/v1beta1/lockedvaults";
   };
 }
 
