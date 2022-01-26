@@ -33,4 +33,7 @@ type VaultKeeper interface {
 	) (sdk.Dec, error)
 	DeleteVault(ctx sdk.Context, id uint64)
 	DeleteVaultForAddressByPair(ctx sdk.Context, address sdk.AccAddress, pairID uint64)
+	GetID(ctx sdk.Context) uint64
+	SetID(ctx sdk.Context, id uint64)
+	SetVault(ctx sdk.Context, vault vaulttypes.Vault)
 }
