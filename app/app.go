@@ -456,6 +456,8 @@ func New(
 		app.GetSubspace(liquidationtypes.ModuleName),
 		app.accountKeeper,
 		app.bankKeeper,
+		&app.assetKeeper,
+		&app.vaultKeeper,
 	)
 	/****  Module Options ****/
 

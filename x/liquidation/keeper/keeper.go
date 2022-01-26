@@ -19,6 +19,8 @@ type Keeper struct {
 	paramstore paramtypes.Subspace
 	account    expected.AccountKeeper
 	bank       expected.BankKeeper
+	vault      expected.VaultKeeper
+	asset      expected.AssetKeeper
 }
 
 func NewKeeper(
@@ -28,6 +30,8 @@ func NewKeeper(
 	ps paramtypes.Subspace,
 	account expected.AccountKeeper,
 	bank expected.BankKeeper,
+	asset expected.AssetKeeper,
+	vault expected.VaultKeeper,
 
 ) *Keeper {
 	// set KeyTable if it has not already been set
@@ -43,9 +47,15 @@ func NewKeeper(
 		paramstore: ps,
 		account:    account,
 		bank:       bank,
+		asset:      asset,
+		vault:      vault,
 	}
 }
 
 func (k Keeper) Logger(ctx sdk.Context) log.Logger {
 	return ctx.Logger().With("module", fmt.Sprintf("x/%s", types.ModuleName))
+}
+
+func (k *Keeper) Store(ctx sdk.Context) sdk.KVStore {
+	return ctx.KVStore(k.storeKey)
 }
