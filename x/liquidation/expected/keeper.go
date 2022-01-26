@@ -1,0 +1,16 @@
+package expected
+
+import (
+	sdk "github.com/cosmos/cosmos-sdk/types"
+	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
+)
+
+type AccountKeeper interface {
+	GetModuleAccount(ctx sdk.Context, name string) authtypes.ModuleAccountI
+}
+
+type BankKeeper interface {
+	MintCoins(ctx sdk.Context, name string, coins sdk.Coins) error
+	SendCoinsFromModuleToModule(ctx sdk.Context, senderModule, recipientModule string, amt sdk.Coins) error
+	GetBalance(ctx sdk.Context, addr sdk.AccAddress, denom string) sdk.Coin
+}
