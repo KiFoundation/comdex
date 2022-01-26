@@ -188,6 +188,21 @@ func (k *Keeper) DeleteLockedVault(ctx sdk.Context, id uint64) {
 	store.Delete(key)
 }
 
+func (k *Keeper) GetLockedVault(ctx sdk.Context, id uint64) (locked_vault liquidationtypes.LockedVault, found bool) {
+	var (
+		store = k.Store(ctx)
+		key   = liquidationtypes.LockedVaultKey(id)
+		value = store.Get(key)
+	)
+
+	if value == nil {
+		return locked_vault, false
+	}
+
+	k.cdc.MustUnmarshal(value, &locked_vault)
+	return locked_vault, true
+}
+
 func (k *Keeper) GetLockedVaults(ctx sdk.Context) (locked_vaults []liquidationtypes.LockedVault) {
 	var (
 		store = k.Store(ctx)
@@ -197,9 +212,9 @@ func (k *Keeper) GetLockedVaults(ctx sdk.Context) (locked_vaults []liquidationty
 	defer iter.Close()
 
 	for ; iter.Valid(); iter.Next() {
-		var auction liquidationtypes.LockedVault
-		k.cdc.MustUnmarshal(iter.Value(), &auction)
-		locked_vaults = append(locked_vaults, auction)
+		var locked_vault liquidationtypes.LockedVault
+		k.cdc.MustUnmarshal(iter.Value(), &locked_vault)
+		locked_vaults = append(locked_vaults, locked_vault)
 	}
 
 	return locked_vaults
