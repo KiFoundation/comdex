@@ -54,7 +54,7 @@ func (k *Keeper) GetPriceForAsset(ctx sdk.Context, id uint64) (uint64, bool) {
 	if id == 1 {
 		return 1500, true
 	} else if id == 2 {
-		return 100099, true
+		return 10009, true
 	} else if id == 3 {
 		return 10, true
 	} else if id == 4 {

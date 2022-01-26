@@ -452,6 +452,7 @@ func New(
 		app.cdc,
 		app.keys[liquidationtypes.StoreKey],
 		app.bankKeeper,
+		app.accountKeeper,
 		&app.assetKeeper,
 		&app.oracleKeeper,
 		&app.vaultKeeper,

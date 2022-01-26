@@ -16,17 +16,19 @@ type Keeper struct {
 	cdc        codec.BinaryCodec
 	key        sdk.StoreKey
 	bank       expected.BankKeeper
+	account    expected.AccountKeeper
 	asset      expected.AssetKeeper
 	oracle     expected.OracleKeeper
 	vault      expected.VaultKeeper
 	paramstore paramtypes.Subspace
 }
 
-func NewKeeper(cdc codec.BinaryCodec, key sdk.StoreKey, bank expected.BankKeeper, asset expected.AssetKeeper, oracle expected.OracleKeeper, vault expected.VaultKeeper, paramstore paramtypes.Subspace) Keeper {
+func NewKeeper(cdc codec.BinaryCodec, key sdk.StoreKey, bank expected.BankKeeper, account expected.AccountKeeper, asset expected.AssetKeeper, oracle expected.OracleKeeper, vault expected.VaultKeeper, paramstore paramtypes.Subspace) Keeper {
 	return Keeper{
 		cdc:        cdc,
 		key:        key,
 		bank:       bank,
+		account: 	account,
 		asset:      asset,
 		oracle:     oracle,
 		vault:      vault,

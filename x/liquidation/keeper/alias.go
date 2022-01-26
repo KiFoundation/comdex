@@ -4,10 +4,19 @@ import (
 	assettypes "github.com/comdex-official/comdex/x/asset/types"
 	vaulttypes "github.com/comdex-official/comdex/x/vault/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 )
 
 func (k *Keeper) GetVaults(ctx sdk.Context) (vaults []vaulttypes.Vault) {
 	return k.vault.GetVaults(ctx)
+}
+
+func (k *Keeper) GetModuleAccount(ctx sdk.Context, name string) authtypes.ModuleAccountI {
+	return k.account.GetModuleAccount(ctx, name)
+}
+
+func (k *Keeper) GetBalance(ctx sdk.Context, addr sdk.AccAddress, denom string) sdk.Coin {
+	return k.bank.GetBalance(ctx, addr, denom)
 }
 
 func (k *Keeper) DeleteVault(ctx sdk.Context, id uint64) {
@@ -34,4 +43,16 @@ func (k *Keeper) CalculateCollaterlizationRatio(
 	assetOut assettypes.Asset,
 ) (sdk.Dec, error) {
 	return k.vault.CalculateCollaterlizationRatio(ctx, amountIn, assetIn, amountOut, assetOut)
+}
+
+func (k *Keeper) SetVault(ctx sdk.Context, vault vaulttypes.Vault){
+	k.vault.SetVault(ctx,vault)
+}
+
+func (k *Keeper) SetID(ctx sdk.Context, id uint64){
+	k.vault.SetID(ctx,id)
+}
+
+func (k *Keeper) GetID(ctx sdk.Context) uint64{
+	return k.vault.GetID(ctx)
 }

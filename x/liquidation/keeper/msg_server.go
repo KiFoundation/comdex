@@ -43,6 +43,6 @@ func (k msgServer) MsgLock(c context.Context, request *types.MsgLockRequest) (*t
 		}
 	)
 	k.SetLockedVaultID(ctx, id+1)
-	k.SetVault(ctx, vault)
+	k.SetLockedVault(ctx, vault)
 	return &types.MsgLockResponse{}, nil
 }
