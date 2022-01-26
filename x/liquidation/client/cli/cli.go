@@ -16,6 +16,7 @@ func GetQueryCmd() *cobra.Command {
 
 	cmd.AddCommand(
 		queryParams(),
+		QueryAllVaults(),
 	)
 
 	return cmd
@@ -30,7 +31,9 @@ func GetTxCmd() *cobra.Command {
 		RunE:                       client.ValidateCmd,
 	}
 
-	cmd.AddCommand()
+	cmd.AddCommand(
+		txLock(),
+		)
 
 	return cmd
 }

@@ -449,13 +449,15 @@ func New(
 		app.assetKeeper,
 	)
 
-	app.liquidationKeeper = *liquidationkeeper.NewKeeper(
+	app.liquidationKeeper = liquidationkeeper.NewKeeper(
 		app.cdc,
-		keys[liquidationtypes.StoreKey],
-		keys[liquidationtypes.MemStoreKey],
-		app.GetSubspace(liquidationtypes.ModuleName),
-		app.accountKeeper,
+		app.keys[liquidationtypes.StoreKey],
 		app.bankKeeper,
+		app.accountKeeper,
+		&app.assetKeeper,
+		&app.oracleKeeper,
+		&app.vaultKeeper,
+		app.GetSubspace(liquidationtypes.ModuleName),
 	)
 	/****  Module Options ****/
 

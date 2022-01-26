@@ -14,38 +14,32 @@ import (
 
 type Keeper struct {
 	cdc        codec.BinaryCodec
-	storeKey   sdk.StoreKey
-	memKey     sdk.StoreKey
-	paramstore paramtypes.Subspace
-	account    expected.AccountKeeper
+	key        sdk.StoreKey
 	bank       expected.BankKeeper
+	account    expected.AccountKeeper
+	asset      expected.AssetKeeper
+	oracle     expected.OracleKeeper
+	vault      expected.VaultKeeper
+	paramstore paramtypes.Subspace
 }
 
-func NewKeeper(
-	cdc codec.BinaryCodec,
-	storeKey,
-	memKey sdk.StoreKey,
-	ps paramtypes.Subspace,
-	account expected.AccountKeeper,
-	bank expected.BankKeeper,
-
-) *Keeper {
-	// set KeyTable if it has not already been set
-	if !ps.HasKeyTable() {
-		ps = ps.WithKeyTable(types.ParamKeyTable())
-	}
-
-	return &Keeper{
-
+func NewKeeper(cdc codec.BinaryCodec, key sdk.StoreKey, bank expected.BankKeeper, account expected.AccountKeeper, asset expected.AssetKeeper, oracle expected.OracleKeeper, vault expected.VaultKeeper, paramstore paramtypes.Subspace) Keeper {
+	return Keeper{
 		cdc:        cdc,
-		storeKey:   storeKey,
-		memKey:     memKey,
-		paramstore: ps,
-		account:    account,
+		key:        key,
 		bank:       bank,
+		account: 	account,
+		asset:      asset,
+		oracle:     oracle,
+		vault:      vault,
+		paramstore: paramstore,
 	}
 }
 
 func (k Keeper) Logger(ctx sdk.Context) log.Logger {
 	return ctx.Logger().With("module", fmt.Sprintf("x/%s", types.ModuleName))
+}
+
+func (k *Keeper) Store(ctx sdk.Context) sdk.KVStore {
+	return ctx.KVStore(k.key)
 }
