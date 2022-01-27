@@ -130,8 +130,10 @@ func (k Keeper) TransferCollateralRecreateVaultAndDeleteLockedVault(
 		AmountIn:  locked_vault.AmountIn,
 		AmountOut: locked_vault.AmountOut,
 	}
+	vaultOwner, _ := sdk.AccAddressFromBech32(vault.Owner)
 	k.SetVaultID(ctx, vault.ID+1)
 	k.SetVault(ctx, vault)
+	k.SetVaultForAddressByPair(ctx, vaultOwner, vault.PairID, vault.ID)
 	k.DeleteLockedVault(ctx, locked_vault.Id)
 	return nil
 }

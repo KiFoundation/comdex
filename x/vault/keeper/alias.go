@@ -52,11 +52,11 @@ func (k *Keeper) GetPair(ctx sdk.Context, id uint64) (assettypes.Pair, bool) {
 
 func (k *Keeper) GetPriceForAsset(ctx sdk.Context, id uint64) (uint64, bool) {
 	if id == 1 {
-		return 10000, true
+		return 300, true
 	} else if id == 2 {
-		return 800000, true
+		return 100, true
 	} else if id == 3 {
-		return 30, true
+		return 30000, true
 	} else if id == 4 {
 		return 2000, true
 	}

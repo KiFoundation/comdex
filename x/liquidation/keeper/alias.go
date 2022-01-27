@@ -68,3 +68,7 @@ func (k *Keeper) SetVaultID(ctx sdk.Context, id uint64) {
 func (k *Keeper) SetVault(ctx sdk.Context, vault vaulttypes.Vault) {
 	k.vault.SetVault(ctx, vault)
 }
+
+func (k *Keeper) SetVaultForAddressByPair(ctx sdk.Context, address sdk.AccAddress, pairID uint64, id uint64) {
+	k.vault.SetVaultForAddressByPair(ctx, address, pairID, id)
+}
