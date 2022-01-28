@@ -96,6 +96,10 @@ import (
 	"github.com/comdex-official/comdex/x/liquidation"
 	liquidationkeeper "github.com/comdex-official/comdex/x/liquidation/keeper"
 	liquidationtypes "github.com/comdex-official/comdex/x/liquidation/types"
+
+	"github.com/comdex-official/comdex/x/auction"
+	auctionkeeper "github.com/comdex-official/comdex/x/auction/keeper"
+	auctiontypes "github.com/comdex-official/comdex/x/auction/types"
 )
 
 const (
@@ -138,6 +142,7 @@ var (
 		asset.AppModuleBasic{},
 		oracle.AppModuleBasic{},
 		liquidation.AppModuleBasic{},
+		auction.AppModuleBasic{},
 	)
 )
 
@@ -201,6 +206,7 @@ type App struct {
 	liquidityKeeper   liquiditykeeper.Keeper
 	oracleKeeper      oraclekeeper.Keeper
 	liquidationKeeper liquidationkeeper.Keeper
+	auctionKeeper     auctionkeeper.Keeper
 }
 
 // New returns a reference to an initialized App.
@@ -225,6 +231,7 @@ func New(
 			govtypes.StoreKey, paramstypes.StoreKey, ibchost.StoreKey, upgradetypes.StoreKey,
 			evidencetypes.StoreKey, ibctransfertypes.StoreKey, capabilitytypes.StoreKey,
 			vaulttypes.StoreKey, liquiditytypes.StoreKey, assettypes.StoreKey, oracletypes.StoreKey, liquidationtypes.StoreKey,
+			auctiontypes.StoreKey,
 		)
 	)
 
@@ -267,6 +274,7 @@ func New(
 	app.paramsKeeper.Subspace(assettypes.ModuleName)
 	app.paramsKeeper.Subspace(oracletypes.ModuleName)
 	app.paramsKeeper.Subspace(liquidationtypes.ModuleName)
+	app.paramsKeeper.Subspace(auctiontypes.ModuleName)
 
 	// set the BaseApp's parameter store
 	baseApp.SetParamStore(
@@ -459,6 +467,15 @@ func New(
 		&app.assetKeeper,
 		&app.vaultKeeper,
 	)
+
+	app.auctionKeeper = *auctionkeeper.NewKeeper(
+		app.cdc,
+		keys[auctiontypes.StoreKey],
+		keys[auctiontypes.MemStoreKey],
+		app.GetSubspace(auctiontypes.ModuleName),
+		app.accountKeeper,
+		app.bankKeeper,
+	)
 	/****  Module Options ****/
 
 	// NOTE: we may consider parsing `appOpts` inside module constructors. For the moment
@@ -491,6 +508,7 @@ func New(
 		asset.NewAppModule(app.cdc, app.assetKeeper),
 		oracle.NewAppModule(app.cdc, app.oracleKeeper),
 		liquidation.NewAppModule(app.cdc, app.liquidationKeeper, app.accountKeeper, app.bankKeeper),
+		auction.NewAppModule(app.cdc, app.auctionKeeper, app.accountKeeper, app.bankKeeper),
 	)
 
 	// During begin block slashing happens after distr.BeginBlocker so that
@@ -500,7 +518,7 @@ func New(
 	app.mm.SetOrderBeginBlockers(
 		upgradetypes.ModuleName, minttypes.ModuleName, distrtypes.ModuleName, slashingtypes.ModuleName,
 		evidencetypes.ModuleName, stakingtypes.ModuleName, liquiditytypes.ModuleName, ibchost.ModuleName,
-		liquidationtypes.ModuleName, vaulttypes.ModuleName, assettypes.ModuleName,
+		liquidationtypes.ModuleName, auctiontypes.ModuleName,
 	)
 
 	app.mm.SetOrderEndBlockers(crisistypes.ModuleName, govtypes.ModuleName, stakingtypes.ModuleName, liquiditytypes.ModuleName)
@@ -528,6 +546,7 @@ func New(
 		assettypes.ModuleName,
 		vaulttypes.ModuleName,
 		liquidationtypes.ModuleName,
+		auctiontypes.ModuleName,
 	)
 
 	app.mm.RegisterInvariants(&app.crisisKeeper)
@@ -707,5 +726,6 @@ func (a *App) ModuleAccountsPermissions() map[string][]string {
 		vaulttypes.ModuleName:          {authtypes.Minter, authtypes.Burner},
 		liquiditytypes.ModuleName:      {authtypes.Minter, authtypes.Burner},
 		liquidationtypes.ModuleName:    {authtypes.Minter, authtypes.Burner},
+		auctiontypes.ModuleName:        {authtypes.Minter, authtypes.Burner},
 	}
 }
