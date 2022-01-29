@@ -14,12 +14,15 @@ import (
 
 type (
 	Keeper struct {
-		cdc        codec.BinaryCodec
-		storeKey   sdk.StoreKey
-		memKey     sdk.StoreKey
-		paramstore paramtypes.Subspace
-		account    expected.AccountKeeper
-		bank       expected.BankKeeper
+		cdc         codec.BinaryCodec
+		storeKey    sdk.StoreKey
+		memKey      sdk.StoreKey
+		paramstore  paramtypes.Subspace
+		account     expected.AccountKeeper
+		bank        expected.BankKeeper
+		liquidation expected.LiquidationKeeper
+		asset       expected.AssetKeeper
+		vault       expected.VaultKeeper
 	}
 )
 
@@ -30,6 +33,9 @@ func NewKeeper(
 	ps paramtypes.Subspace,
 	account expected.AccountKeeper,
 	bank expected.BankKeeper,
+	liquidation expected.LiquidationKeeper,
+	asset expected.AssetKeeper,
+	vault expected.VaultKeeper,
 
 ) *Keeper {
 	// set KeyTable if it has not already been set
@@ -39,15 +45,22 @@ func NewKeeper(
 
 	return &Keeper{
 
-		cdc:        cdc,
-		storeKey:   storeKey,
-		memKey:     memKey,
-		paramstore: ps,
-		account:    account,
-		bank:       bank,
+		cdc:         cdc,
+		storeKey:    storeKey,
+		memKey:      memKey,
+		paramstore:  ps,
+		account:     account,
+		bank:        bank,
+		liquidation: liquidation,
+		asset:       asset,
+		vault:       vault,
 	}
 }
 
 func (k Keeper) Logger(ctx sdk.Context) log.Logger {
 	return ctx.Logger().With("module", fmt.Sprintf("x/%s", types.ModuleName))
+}
+
+func (k *Keeper) Store(ctx sdk.Context) sdk.KVStore {
+	return ctx.KVStore(k.storeKey)
 }

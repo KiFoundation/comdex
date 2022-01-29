@@ -88,7 +88,7 @@ func (k Keeper) TransferCollateralCreateLockedVaultAndDeleteVault(
 	}
 
 	locked_vault := liquidationtypes.LockedVault{
-		Id:                   k.GetLockedVaultID(ctx),
+		Id:                   k.GetLockedVaultID(ctx) + 1,
 		VaultId:              vault.ID,
 		PairId:               vault.PairID,
 		Owner:                vault.Owner,
@@ -99,7 +99,7 @@ func (k Keeper) TransferCollateralCreateLockedVaultAndDeleteVault(
 		CrAtLiquidation:      collateralizationRatio,
 		LiquidationTimestamp: time.Now().UTC(),
 	}
-	k.SetLockedVaultID(ctx, locked_vault.Id+1)
+	k.SetLockedVaultID(ctx, locked_vault.Id)
 	k.SetLockedVault(ctx, locked_vault)
 
 	vaultOwner, _ := sdk.AccAddressFromBech32(vault.Owner)
@@ -122,16 +122,15 @@ func (k Keeper) TransferCollateralRecreateVaultAndDeleteLockedVault(
 	if err != nil {
 		return err
 	}
-
 	vault := vaulttypes.Vault{
-		ID:        k.GetVaultID(ctx),
+		ID:        k.GetVaultID(ctx) + 1,
 		PairID:    locked_vault.PairId,
 		Owner:     locked_vault.Owner,
 		AmountIn:  locked_vault.AmountIn,
 		AmountOut: locked_vault.AmountOut,
 	}
 	vaultOwner, _ := sdk.AccAddressFromBech32(vault.Owner)
-	k.SetVaultID(ctx, vault.ID+1)
+	k.SetVaultID(ctx, vault.ID)
 	k.SetVault(ctx, vault)
 	k.SetVaultForAddressByPair(ctx, vaultOwner, vault.PairID, vault.ID)
 	k.DeleteLockedVault(ctx, locked_vault.Id)
@@ -220,4 +219,26 @@ func (k *Keeper) GetLockedVaults(ctx sdk.Context) (locked_vaults []liquidationty
 	}
 
 	return locked_vaults
+}
+
+func (k *Keeper) FlagLockedVaultAsAuctioned(ctx sdk.Context, id uint64) error {
+
+	locked_vault, found := k.GetLockedVault(ctx, id)
+	if !found {
+		return liquidationtypes.LockedVaultDoesNotExist
+	}
+	locked_vault.IsAuctioned = true
+	k.SetLockedVault(ctx, locked_vault)
+	return nil
+}
+
+func (k *Keeper) UnflagLockedVaultAsAuctioned(ctx sdk.Context, id uint64) error {
+
+	locked_vault, found := k.GetLockedVault(ctx, id)
+	if !found {
+		return liquidationtypes.LockedVaultDoesNotExist
+	}
+	locked_vault.IsAuctioned = false
+	k.SetLockedVault(ctx, locked_vault)
+	return nil
 }

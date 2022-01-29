@@ -1,5 +1,9 @@
 package types
 
+import (
+	sdk "github.com/cosmos/cosmos-sdk/types"
+)
+
 const (
 	ModuleName   = "auction"
 	StoreKey     = ModuleName
@@ -8,6 +12,11 @@ const (
 	MemStoreKey  = ModuleName
 )
 
-func KeyPrefix(p string) []byte {
-	return []byte(p)
+var (
+	CollateralAuctionIdKey     = []byte{0x01}
+	CollateralAuctionKeyPrefix = []byte{0x11}
+)
+
+func CollateralAuctionKey(id uint64) []byte {
+	return append(CollateralAuctionKeyPrefix, sdk.Uint64ToBigEndian(id)...)
 }
